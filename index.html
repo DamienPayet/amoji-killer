@@ -1,0 +1,416 @@
+<!doctype html>
+<html lang="en" class="h-100">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+    <meta name="generator" content="Jekyll v4.1.1">
+    <title>Sticky Footer Navbar Template · Bootstrap</title>
+
+    <link rel="canonical" href="https://getbootstrap.com/docs/4.5/examples/sticky-footer-navbar/">
+
+    <!-- Bootstrap core CSS -->
+    <link href="assets/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        .bd-placeholder-img {
+            font-size: 1.125rem;
+            text-anchor: middle;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        @media (min-width: 768px) {
+            .bd-placeholder-img-lg {
+                font-size: 3.5rem;
+            }
+        }
+    </style>
+    <!-- Custom styles for this template -->
+    <link href="sticky-footer-navbar.css" rel="stylesheet">
+</head>
+<body class="d-flex flex-column h-100">
+<header>
+    <!-- Fixed navbar -->
+    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+        <a class="navbar-brand" href="#">Fixed navbar</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse"
+                aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Link</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
+                </li>
+            </ul>
+            <form class="form-inline mt-2 mt-md-0">
+                <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
+                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+            </form>
+        </div>
+    </nav>
+</header>
+
+<!-- Begin page content -->
+<main role="main" class="flex-shrink-0">
+    <div class="container">
+        <div id="madiv">
+            <h1 id="titrep" class="mt-5">Sticky footer with fixed navbar</h1>
+        </div>
+        <title>Template HTML Basique</title>
+        <meta name="description" content="Page HTML Vide">
+        <meta name="author" content="ASI2 - Web Dynamique">
+        <!-- <link rel="stylesheet" href="css/styles.css?v=1.0"> -->
+        <style>
+            canvas {
+                width: 512px;
+                height: 512px;
+                image-rendering: -moz-crisp-edges;
+                image-rendering: -webkit-crisp-edges;
+                image-rendering: pixelated;
+                image-rendering: crisp-edges;
+            }
+
+        </style>
+
+        <canvas id="canvas" style="width:800px; height:600px;" width="800" height="600">t</canvas>
+        <button id="updatebtn">Update</button>
+        <button style=" display:none" onclick="restartgame()" id="restart">Restart game</button>
+        <script>
+
+            var PROJECTILES = [];
+            var MECHANTS = [];
+
+            var distance = function (A, B) {
+                return Math.hypot(A.x - B.x, A.y - B.y);
+            }
+
+            function vague() {
+                var difficulti = 0;
+                if (difficulti == 0) {
+                    if (MECHANTS.length == 0) {
+                        perso.level++;
+                        perso.monster = 5 * (perso.level * 0.3)
+                        for (i = 0; i <= perso.monster; i++) {
+                            MECHANTS.push(new MECHANT(Math.random() * canvas.width, Math.random() * canvas.height));
+                        }
+                    }
+                }
+            }
+
+            function r2d(radians) {
+                return radians * 180 / Math.PI;
+            }
+
+            function restartgame() {
+                window.location.reload();
+            }
+
+            var PROJECTILE = function (x, y, a, v, dmax = 400) {
+                this.x = x;
+                this.y = y;
+                this.a = a;
+                this.v = v;
+                this.max = dmax;
+                this.d = 0;
+                this.face = "💩";
+                this.stopped = false;
+
+                this.avancer = function () {
+                    this.d += this.v;
+                    if (this.d < this.max) {
+                        console.log(v);
+                        pi = Math.PI;
+                        arad = (this.a / 180) * pi;
+                        var dx = Math.cos(arad) * this.v;
+                        var dy = Math.sin(arad) * this.v;
+                        this.x += dx;
+                        this.y += dy;
+
+                        for (i = 0; i < MECHANTS.length; i++) {
+                            if (MECHANTS[i].alive) {
+                                if (distance(this, MECHANTS[i]) < 20) {
+                                    MECHANTS[i].meurt();
+                                    MECHANTS.splice(i, 1);
+                                    this.d = this.dmax;
+                                    this.stopped = true;
+                                }
+                            }
+                        }
+                    }
+                };
+
+                this.draw = function (ctx) {
+                    ctx.fillText(this.face, Math.ceil(this.x), Math.ceil(this.y));
+                }
+            }
+
+
+            var MECHANT = function (x, y) {
+                this.x = x;
+                this.y = y;
+                this.a = 0;
+                this.v = 1;
+                this.face = "😈"
+                this.alive = true;
+                this.meurt = function () {
+                    this.alive = false;
+                    perso.score++;
+                    this.face = "👿";
+                    // MECHANTS.push(new MECHANT(Math.random() * canvas.width, Math.random() * canvas.height));
+
+                }
+                this.ia = function () {
+                    this.a = r2d(Math.atan2(perso.y - this.y, perso.x - this.x));
+                    pi = Math.PI;
+                    arad = (this.a / 180) * pi;
+                    var dx = Math.cos(arad) * this.v;
+                    var dy = Math.sin(arad) * this.v;
+                    this.x = this.x + dx;
+                    this.y = this.y + dy;
+
+                }
+                this.draw = function (ctx) {
+                    ctx.fillText(this.face, Math.ceil(this.x), Math.ceil(this.y));
+                    this.ia();
+                }
+            }
+
+            var PERSO = function (x, y, a, v) {
+                this.face = "😡";
+                this.x = x;
+                this.y = y;
+                this.a = a;
+                this.v = v;
+                this.score = 0;
+                this.life = 100;
+                this.level = 0;
+                this.monster = 5;
+
+                this.aller = function (x, y) {
+                    this.x = x;
+                    this.y = y;
+                }
+
+                this.tourner = function (a) {
+                    this.a = this.a + a;
+                }
+
+                this.vitesse = function (v) {
+                    this.v = v;
+                }
+
+                this.avancer = function () {
+                    pi = Math.PI;
+                    arad = (this.a / 180) * pi;
+                    var dx = Math.cos(arad) * this.v;
+                    var dy = Math.sin(arad) * this.v;
+                    this.aller(this.x + dx, this.y + dy);
+                    this.face = "😡";
+                    for (var i = 0; i < MECHANTS.length; i++) {
+                        if (distance(this, MECHANTS[i]) < 20) {
+                            this.face = "🥵";
+                            this.life--;
+                        }
+                    }
+
+                }
+
+                this.tirer = function () {
+                    PROJECTILES.push(new PROJECTILE(this.x, this.y, this.a, this.v + 10, 1000)); // 3-> la vitesse du projectile
+                }
+
+                this.draw = function (ctx) {
+                    pi = Math.PI;
+                    arad = (this.a / 180) * pi;
+                    var dx = Math.cos(arad) * 30;
+                    var dy = Math.sin(arad) * 30;
+                    ctx.beginPath();
+                    ctx.strokeStyle = "#f00";
+                    ctx.moveTo(this.x, this.y);
+                    ctx.lineTo(this.x + dx, this.y + dy);
+                    ctx.stroke();
+                    ctx.fillText(this.face, Math.ceil(this.x), Math.ceil(this.y));
+                }
+            }
+
+            function levelset(level) {
+              //  perso.difficulti = level;
+                var element = document.getElementById("madiv");
+                element.removeChild(element.lastElementChild);
+                element.removeChild(element.lastElementChild);
+                document.getElementById("titrep").innerText = "GO ! "
+                start();
+            }
+
+
+            document.getElementById("titrep").innerText = "Choose your level :"
+            var madiv = document.getElementById('madiv');
+            var easyButton = document.createElement("button");
+            var hardButton = document.createElement("button");
+            hardButton.innerHTML = "HARD";
+            hardButton.setAttribute("class", "btn btn-primary");
+            hardButton.addEventListener("click", function (e) {
+                levelset(0);
+            });
+            easyButton.innerHTML = "IZI";
+            easyButton.setAttribute("class", "btn btn-primary");
+            easyButton.addEventListener("click", function (e) {
+                levelset(1);
+            });
+            madiv.appendChild(easyButton);
+            madiv.appendChild(hardButton);
+
+            function start() {
+                console.log("go");
+                var perso = new PERSO(10, 10, 90, 0);
+                var i = 0;
+                var canvas = document.getElementById("canvas");
+                canvas.width = 800;
+                canvas.height = 600;
+                var ctx = canvas.getContext('2d');
+                ctx.font = '20px serif'
+                ctx.textAlign = "center";
+                ctx.textBaseline = "middle";
+
+
+                var loop = function () {
+
+                    if (perso.life > 0) {
+                        vague();
+
+                        window.requestAnimationFrame(loop);
+                        controle();
+                        perso.avancer();
+                        draw(ctx);
+                        ctx.fillText("Vie: " + perso.life + "% Score: " + perso.score + " Level: " + perso.level + " Alive: " + MECHANTS.length, canvas.width >> 1, 20);
+                    } else {
+                        draw(ctx);
+                        ctx.fillText("Perdu! 🤯", canvas.width >> 1, canvas.height >> 5);
+                        document.getElementById("restart").style = 'display :block;'
+                        document.getElementById("titrep").innerText = "Vous avez survécu " + perso.level + " Manches."
+                    }
+                }
+            }
+
+            var KEYS = {
+                UP: false,
+                DOWN: false,
+                LEFT: false,
+                RIGHT: false,
+                FIRE: false,
+
+            }
+
+            function controle() {
+                if (KEYS.UP === true) {
+                    perso.vitesse(5);
+                } else if (KEYS.DOWN === true) {
+                    perso.vitesse(-5);
+                } else {
+                    perso.vitesse(0);
+                }
+
+                if (KEYS.LEFT === true) {
+                    perso.tourner(-3);
+                }
+                if (KEYS.RIGHT === true) {
+                    perso.tourner(3);
+                }
+                if (KEYS.FIRE === true) {
+                    perso.tirer();
+                    KEYS.FIRE = false;
+                }
+            }
+
+            window.addEventListener('keydown', function (event) {
+                console.log(event.keyCode);
+                switch (event.keyCode) {
+                    case 81: // Left
+                        KEYS.LEFT = true;
+                        break;
+                    case 90: // Up
+                        KEYS.UP = true;
+                        break;
+                    case 68: // Right
+                        KEYS.RIGHT = true;
+                        break;
+                    case 83: // Down
+                        KEYS.DOWN = true;
+                        break;
+                    case 32: // shoot
+                        KEYS.FIRE = true;
+                        break;
+                }
+                event.preventDefault();
+            }, false);
+            window.addEventListener('keyup', function (event) {
+                console.log(event.keyCode);
+                switch (event.keyCode) {
+                    case 81: // Left
+                        KEYS.LEFT = false;
+                        break;
+                    case 90: // Up
+                        KEYS.UP = false;
+                        break;
+                    case 68: // Right
+                        KEYS.RIGHT = false;
+                        break;
+                    case 83: // Down
+                        KEYS.DOWN = false;
+                        break;
+                    case 32: // shoot
+                        KEYS.FIRE = false;
+                        break;
+                }
+                event.preventDefault();
+            }, false);
+
+
+            //  document.addEventListener('keyup', controle);
+
+
+            var draw = function (ctx) {
+                ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+                for (var i = 0; i < PROJECTILES.length; i++) {
+                    if (PROJECTILES.stopped) {
+                        PROJECTILES.splice(i, 1);
+                    } else {
+                        PROJECTILES[i].avancer();
+                        PROJECTILES[i].draw(ctx);
+                    }
+                }
+
+                for (var i = 0; i < MECHANTS.length; i++) {
+                    MECHANTS[i].draw(ctx);
+                }
+
+                perso.draw(ctx);
+            }
+            loop();
+
+        </script>
+    </div>
+</main>
+</body>
+<footer class="footer mt-auto py-3">
+    <div class="container">
+        <span class="text-muted">Place sticky footer content here.</span>
+    </div>
+</footer>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+        crossorigin="anonymous"></script>
+<script>window.jQuery || document.write('<script src="../assets/js/vendor/jquery.slim.min.js"><\/script>')</script>
+<script src="../assets/dist/js/bootstrap.bundle.min.js"></script>
+</html>

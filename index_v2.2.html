@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html class="h-100" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <title>Emoji Massacre</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css"
+          integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+
+    <style>
+        .bd-placeholder-img {
+            font-size: 1.125rem;
+            text-anchor: middle;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        @media (min-width: 768px) {
+            .bd-placeholder-img-lg {
+                font-size: 3.5rem;
+            }
+        }
+    </style>
+    <!-- Custom styles for this template -->
+    <link href="assets/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="d-flex flex-column h-100">
+<header>
+    <!-- Fixed navbar -->
+    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+        <a class="navbar-brand" href="#">Emoji massacre</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse"
+                aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Link</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
+                </li>
+            </ul>
+            <form class="form-inline mt-2 mt-md-0">
+                <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
+                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+            </form>
+        </div>
+    </nav>
+</header>
+
+<!-- Begin page content -->
+<main role="main" class="flex-shrink-0">
+    <div class="container">
+        <h1 class="mt-5">ASI2 Game Emoji Massacre</h1>
+        <p class="lead"><strong> Emoji Massacre</strong>: Jeu HTML/Js ASI2</p>
+        <p>Déplacez-vous avec les touches <strong>Z</strong>,<strong>Q</strong>,<strong>S</strong>,<strong>D</strong>,Envoyez
+            des projectiles sur les démons en utilisant la <strong>barre d'espace</strong></p>
+        <canvas id="canvas" style="border: 2px solid #888; width:800px; height:600px;" width="800" height="600">t
+        </canvas>
+        <div id="replayButton"></div>
+
+        <p>Back to <a href="https://getbootstrap.com/docs/4.5/examples/sticky-footer/">the default sticky footer</a>
+            minus the navbar.</p>
+    </div>
+</main>
+
+<footer class="footer mt-auto py-3">
+    <div class="container">
+        <span class="text-muted">Place sticky footer content here.</span>
+    </div>
+</footer>
+<script src="./mechant.js"></script>
+<script src="./perso.js"></script>
+<script src="./bonus.js"></script>
+<script src="./projectile.js"></script>
+<script>
+    /*
+    TODO:
+
+    - Empecher le personnage de sortir de l'écran. --> Faire des murs
+    - Augmenter la vitesse des Méchants quand ils se font tuer.
+      - En fonction du score, les méchants vont plus vite, mais quand le score est trop
+      important, leur vitesse reste la meme, mais par contre, deux repoppent
+    - Implémenter la souris
+      - Détecter la souris dans le cancas
+      - Connaitre la position de la souris
+      - Calculer l'angle créé par la souris et le personnage.
+      - Appliquer l'angle au personnage.
+
+    */
+
+    var distance = function (A, B) {
+        return Math.hypot(A.x - B.x, A.y - B.y);
+    }
+
+    function r2d(radians) {
+        return radians * 180 / Math.PI;
+    }
+
+
+    var perso = new PERSO(10, 10, 90, 0);
+    var i = 0;
+    var canvas = document.getElementById("canvas");
+    canvas.width = 800;
+    canvas.height = 600;
+    var ctx = canvas.getContext('2d');
+
+    ctx.font = '20px serif'
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+
+    for (i = 0; i < 5; i++) {
+        MECHANTS.push(new MECHANT(Math.random() * canvas.width, Math.random() * canvas.height));
+    }
+
+    function showReplayButton() {
+        // instance du canvas = canvas
+        var replayButtonDiv = document.getElementById("replayButton");
+        var replayButton = document.createElement("button");
+        replayButton.innerHTML = "Rejouer";
+        replayButton.setAttribute("class", "btn btn-primary");
+        replayButton.addEventListener("click", function (e) {
+            document.location.reload(true);
+        });
+        replayButtonDiv.appendChild(replayButton);
+    }
+
+    var phase = 0;
+
+    var loop = function () {
+        if (perso.life > 0) {
+            window.requestAnimationFrame(loop);
+            switch (phase) {
+                case 0: // Les ennemis repoppent
+
+                    if (remainingMechant() < perso.level()) {
+                        var newMechant = new MECHANT(Math.random() * canvas.width, Math.random() * canvas.height);
+                        MECHANTS.push(newMechant);
+                        MECHANTS.push(newMechant);
+                    }
+
+                    if (!((perso.score + 1) % 10)) {
+                        MECHANTS = [];
+                        VAGUE(10, 1);
+                        phase = 1;
+                    }
+
+                    break;
+                case 1: // Nouvelle vague
+                    if (MECHANTS.length == 0) {
+                        phase = 0;
+                        console.log("PHASE n°" + phase);
+                    }
+                    break;
+                default:
+
+            }
+
+                for(var i = 0 ; i< BONUX.length ; i++){
+
+                     if((perso.x >= BONUX[i].x - 10 ) && (perso.x <= BONUX[i].x +10) && (perso.y >= BONUX[i].y+ -10) && (perso.y <= BONUX[i].y+10)  ) {
+                        BONUX[i].using(i);
+                     }
+
+                }
+
+
+            controle();
+            perso.avancer();
+            draw(ctx);
+            ctx.fillText("Vie: " + perso.life + "% Score: " + perso.score, canvas.width >> 1, 20);
+        } else {
+            draw(ctx);
+            ctx.fillText("Perdu! 🤯", canvas.width >> 1, canvas.height >> 1);
+            showReplayButton();
+        }
+    }
+    var KEYS = {
+        UP: false,
+        DOWN: false,
+        LEFT: false,
+        RIGHT: false,
+        FIRE: false,
+
+    }
+
+    function controle() {
+        if (KEYS.UP === true) {
+            perso.vitesse(5);
+        } else if (KEYS.DOWN === true) {
+            perso.vitesse(-5);
+        } else {
+            perso.vitesse(0);
+        }
+
+        if (KEYS.LEFT === true) {
+            perso.tourner(-3);
+        }
+        if (KEYS.RIGHT === true) {
+            perso.tourner(3);
+        }
+        if (KEYS.FIRE === true) {
+            perso.tirer();
+            KEYS.FIRE = false;
+        }
+    }
+
+
+    function getMousePos(canvas, evt) {
+        var rect = canvas.getBoundingClientRect();
+        return {
+            x: evt.clientX - rect.left,
+            y: evt.clientY - rect.top
+        };
+    }
+    canvas.addEventListener('mousemove', function (evt) {
+        var mousePos = getMousePos(canvas, evt);
+        mouseXFromCenter = mousePos.x  - perso.x;
+        mouseYFromCenter = mousePos.y - perso.y;
+        mouseAngle = Math.atan2(mouseYFromCenter, mouseXFromCenter);
+        perso.follow(mouseAngle);
+    }, false);
+    canvas.addEventListener('click', function (evt) {
+        perso.tirer();
+    }, false);
+
+    window.addEventListener('keydown', function (event) {
+        //console.log(event.keyCode);
+        switch (event.keyCode) {
+            case 81: // Left
+                KEYS.LEFT = true;
+                break;
+            case 90: // Up
+                KEYS.UP = true;
+                break;
+            case 68: // Right
+                KEYS.RIGHT = true;
+                break;
+            case 83: // Down
+                KEYS.DOWN = true;
+                break;
+            case 32: // shoot
+                KEYS.FIRE = true;
+                break;
+        }
+        event.preventDefault();
+    }, false);
+    window.addEventListener('keyup', function (event) {
+        //console.log(event.keyCode);
+        switch (event.keyCode) {
+            case 81: // Left
+                KEYS.LEFT = false;
+                break;
+            case 90: // Up
+                KEYS.UP = false;
+                break;
+            case 68: // Right
+                KEYS.RIGHT = false;
+                break;
+            case 83: // Down
+                KEYS.DOWN = false;
+                break;
+            case 32: // shoot
+                KEYS.FIRE = false;
+                break;
+        }
+        event.preventDefault();
+    }, false);
+
+
+    //  document.addEventListener('keyup', controle);
+
+
+    var draw = function (ctx) {
+        ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+        for (var i = 0; i < PROJECTILES.length; i++) {
+            if (PROJECTILES.stopped) {
+                PROJECTILES.splice(i, 1);
+            } else {
+                PROJECTILES[i].avancer();
+                PROJECTILES[i].draw(ctx);
+            }
+        }
+        for (var i = 0 ; i < BONUX.length; i++){
+            BONUX[i].draw(ctx);
+            console.log("je te dessine");
+        }
+        for (var i = 0; i < MECHANTS.length; i++) {
+            MECHANTS[i].draw(ctx);
+        }
+
+        perso.draw(ctx);
+    }
+    loop();
+
+</script>
+
+</body>
+</html>
