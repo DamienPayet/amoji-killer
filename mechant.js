@@ -32,14 +32,12 @@ var MECHANT = function (x, y) {
     this.meurt = function () {
         this.alive = false;
         perso.score++;
-
-        if (perso.score % 10 == 0) {
-            var bon = randomInteger(0, 1)
-            if (bon == 1) {
+        if (perso.score % 15 == 0) {
+            if (randomInteger(0, 2) == 1) {
                 this.face = "👿";
                 var bn = new BONUS(this.x, this.y);
-              //  bn.setter(randomInteger(1, 4));
-                bn.setter(1);
+                bn.setter(randomInteger(1, 4));
+               // bn.setter(3);
                 BONUX.push(bn);
             }
         } else {
@@ -49,13 +47,19 @@ var MECHANT = function (x, y) {
     }
 
     this.ia = function () {
-        this.a = r2d(Math.atan2(perso.y - this.y, perso.x - this.x));
-        pi = Math.PI;
-        arad = (this.a / 180) * pi;
-        var dx = Math.cos(arad) * this.v;
-        var dy = Math.sin(arad) * this.v;
-        this.x = this.x + dx;
-        this.y = this.y + dy;
+        if(perso.bonus == "ghost"){
+            this.x = 10;
+            this.y = 10;
+        }else{
+            this.a = r2d(Math.atan2(perso.y - this.y, perso.x - this.x));
+            pi = Math.PI;
+            arad = (this.a / 180) * pi;
+            var dx = Math.cos(arad) * this.v;
+            var dy = Math.sin(arad) * this.v;
+            this.x = this.x + dx;
+            this.y = this.y + dy;
+        }
+
 
     }
     this.draw = function (ctx) {

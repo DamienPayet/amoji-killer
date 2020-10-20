@@ -10,6 +10,7 @@ var BONUS = function (x, y) {
         Ghost: '👻',
         Runner: '🏃'
     }
+    this.timer = ""
     this.setter = function (number) {
         switch (number) {
             case 1:
@@ -19,14 +20,17 @@ var BONUS = function (x, y) {
             case 2 :
                 this.type = 2;
                 this.face = this.face.Killer;
+                this.timer = 10000;
                 break;
             case 3 :
                 this.type = 3;
                 this.face = this.face.Ghost;
+                this.timer = 15000;
                 break;
             case 4 :
                 this.type = 4;
                 this.face = this.face.Runner;
+                this.timer = 20000;
                 break;
         }
     }
@@ -40,13 +44,25 @@ var BONUS = function (x, y) {
                 }
                 break;
             case 2:
-                 console.log('jutilise kill');
+                perso.bonus = "killer";
+                setTimeout(function() {
+                    perso.bonus = "";
+                }, this.timer);
+                console.log(perso.bonus);
                 break;
             case 3 :
-                console.log('jutilise ghost');
+                perso.bonus = "ghost";
+                setTimeout(function() {
+                    perso.bonus = "";
+                }, this.timer);
                 break;
             case 4 :
-                console.log('jutilise runner');
+                perso.bonus = "runner";
+                setTimeout(function() {
+                    perso.bonus = "";
+                }, this.timer);
+                console.log(perso.bonus);
+
                 break;
         }
         BONUX.splice(id,1);

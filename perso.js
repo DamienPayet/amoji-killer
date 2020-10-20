@@ -7,7 +7,7 @@ var PERSO = function(x,y,a,v){
   this.v=v;
   this.score = 0;
   this.life = 100;
-
+  this.bonus = "";
   this.level = function(){
     return 2 + this.score;
   }
@@ -27,6 +27,9 @@ var PERSO = function(x,y,a,v){
 
   this.vitesse = function(v){
     this.v = v;
+    if(this.bonus == "runner"){
+      this.v  = v * 3 ;
+    }
   }
 
   this.avancer = function(){
@@ -50,7 +53,7 @@ var PERSO = function(x,y,a,v){
 
   this.tirer= function(){
 
-    PROJECTILES.push( new PROJECTILE(this.x, this.y, this.a, this.v+50, 1000)); // 3-> la vitesse du projectile
+    PROJECTILES.push( new PROJECTILE(this.x, this.y, this.a, this.v+10, 1000)); // 3-> la vitesse du projectile
 
     }
 
