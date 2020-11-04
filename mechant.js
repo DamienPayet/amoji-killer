@@ -37,7 +37,6 @@ var MECHANT = function (x, y) {
                 this.face = "👿";
                 var bn = new BONUS(this.x, this.y);
                 bn.setter(randomInteger(1, 4));
-               // bn.setter(3);
                 BONUX.push(bn);
             }
         } else {

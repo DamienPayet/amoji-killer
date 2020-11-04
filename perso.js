@@ -8,9 +8,7 @@ var PERSO = function(x,y,a,v){
   this.score = 0;
   this.life = 100;
   this.bonus = "";
-  this.level = function(){
-    return 2 + this.score;
-  }
+  this.level = 0;
 
   this.aller = function(x,y){
     this.x=x;

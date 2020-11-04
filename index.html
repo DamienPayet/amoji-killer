@@ -86,6 +86,7 @@
 
     var perso = new PERSO(10, 10, 90, 0);
     var i = 0;
+    var nb_monster = 0;
     var canvas = document.getElementById("canvas");
     canvas.width = 800;
     canvas.height = 600;
@@ -125,7 +126,7 @@
 
             window.requestAnimationFrame(loop);
 
-            switch (phase) {
+            /*switch (phase) {
                 case 0: // Les ennemis repoppent
 
                     if (remainingMechant() < perso.level()) {
@@ -154,7 +155,30 @@
                 default:
 
             }
+             */
+            if(MECHANTS.length == 0 ){
+                perso.level++;
+                nb_monster = (5 * (perso.level * 0.7));
+                if (nb_monster >= 15){
+                    for (var i = 0 ; i <= 15 ; i++){
+                        nb_monster = nb_monster - 1 ;
+                        MECHANTS.push(new MECHANT(Math.random() * canvas.width, Math.random() * canvas.height));
+                    }
+                }else {
+                    for(var i = 0 ; i <= (5 * (perso.level * 0.7)) ; i++){
+                        MECHANTS.push(new MECHANT(Math.random() * canvas.width, Math.random() * canvas.height));
+                    }
+                }
 
+            }
+            if(nb_monster > 0){
+                if (MECHANTS.length < 15){
+                    while (MECHANTS.length < 15){
+                        nb_monster = nb_monster - 1 ;
+                        MECHANTS.push(new MECHANT(Math.random() * canvas.width, Math.random() * canvas.height));
+                    }
+                }
+            }
             for (var i = 0; i < BONUX.length; i++) {
 
                 if ((perso.x >= BONUX[i].x - 10) && (perso.x <= BONUX[i].x + 10) && (perso.y >= BONUX[i].y + -10) && (perso.y <= BONUX[i].y + 10)) {
@@ -162,13 +186,11 @@
                 }
 
             }
-
-
             controle();
             perso.avancer();
 
             draw(ctx);
-            ctx.fillText("Vie: " + perso.life + "% Score: " + perso.score, canvas.width >> 1, 20);
+            ctx.fillText("Vie: " + perso.life + "% Score: " + perso.score + " Level: " + perso.level, canvas.width >> 1, 20);
         } else {
             draw(ctx);
             ctx.fillText("Perdu! 🤯", canvas.width >> 1, canvas.height >> 1);
@@ -284,7 +306,6 @@
         }
         for (var i = 0; i < BONUX.length; i++) {
             BONUX[i].draw(ctx);
-            console.log("je te dessine");
         }
         for (var i = 0; i < MECHANTS.length; i++) {
             MECHANTS[i].draw(ctx);

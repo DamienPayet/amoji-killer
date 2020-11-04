@@ -20,7 +20,7 @@ var BONUS = function (x, y) {
             case 2 :
                 this.type = 2;
                 this.face = this.face.Killer;
-                this.timer = 10000;
+                this.timer = 4000;
                 break;
             case 3 :
                 this.type = 3;
@@ -30,7 +30,7 @@ var BONUS = function (x, y) {
             case 4 :
                 this.type = 4;
                 this.face = this.face.Runner;
-                this.timer = 20000;
+                this.timer = 10000;
                 break;
         }
     }
